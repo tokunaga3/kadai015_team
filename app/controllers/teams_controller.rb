@@ -1,6 +1,7 @@
 class TeamsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_team, only: %i[show edit update destroy]
+  before_action :owner_change, only: %i[show]
 
   def index
     @teams = Team.all
@@ -30,6 +31,7 @@ class TeamsController < ApplicationController
   end
 
   def update
+
     if @team.update(team_params)
       redirect_to @team, notice: I18n.t('views.messages.update_team')
     else
