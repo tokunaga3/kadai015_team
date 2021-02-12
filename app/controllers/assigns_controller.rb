@@ -17,9 +17,12 @@ class AssignsController < ApplicationController
 
   def destroy
     if @team.owner_id == current_user.id || current_user.id == params[:delete_user].to_i
-      assign = Assign.find(params[:delete_user])
-      destroy_message = assign_destroy(assign, assign.user)
-      redirect_to team_url(params[:team_id]), notice: destroy_message
+      # assign = Assign.find(params[:delete_user])
+      # destroy_message = assign_destroy(assign, assign.user)
+      Assign.find(Assign.where(team_id:1).where(user_id:params[:delete_user]).ids[0]).destroy
+      redirect_to team_url(params[:team_id]), notice: "アサインを削除しました"
+    else
+      redirect_to team_url(params[:team_id]), notice: "アサインを削除できません"
     end
   end
 
