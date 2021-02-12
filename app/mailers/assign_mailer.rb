@@ -6,4 +6,10 @@ class AssignMailer < ApplicationMailer
     @password = password
     mail to: @email, subject: I18n.t('views.messages.complete_registration')
   end
+
+  def agenda_destroy_mail(email)
+    @email = email
+    mail to: @email, subject: I18n.t('アジェンダが削除されました')
+  end
+
 end
