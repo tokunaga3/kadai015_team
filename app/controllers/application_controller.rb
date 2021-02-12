@@ -16,4 +16,15 @@ class ApplicationController < ActionController::Base
   def init_team
     current_user.assigns.create!(team_id: Team.first.id) if current_user.teams.blank?
   end
+
+  def owner_change
+    if params[:owner_change].present?
+      @team.owner_id = params[:owner_change].to_i
+      TeamMailer.owner_change_mail(@team.owner.email).deliver
+    end
+  end
+
+
+
+
 end
