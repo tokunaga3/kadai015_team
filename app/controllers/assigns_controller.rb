@@ -2,6 +2,7 @@ class AssignsController < ApplicationController
   before_action :authenticate_user!
   before_action :email_exist?, only: [:create]
   before_action :user_exist?, only: [:create]
+  before_action :set_team, only: %i[destroy]
 
   def create
     team = find_team(params[:team_id])
@@ -15,10 +16,14 @@ class AssignsController < ApplicationController
   end
 
   def destroy
-    assign = Assign.find(params[:id])
-    destroy_message = assign_destroy(assign, assign.user)
-
-    redirect_to team_url(params[:team_id]), notice: destroy_message
+    if @team.owner_id == current_user.id || current_user.id == params[:delete_user].to_i
+      # assign = Assign.find(params[:delete_user])
+      # destroy_message = assign_destroy(assign, assign.user)
+      Assign.find(Assign.where(team_id:params[:team_id]).where(user_id:params[:delete_user]).ids[0]).destroy
+      redirect_to team_url(params[:team_id]), notice: "アサインを削除しました"
+    else
+      redirect_to team_url(params[:team_id]), notice: "アサインを削除できません"
+    end
   end
 
   private
@@ -65,4 +70,9 @@ class AssignsController < ApplicationController
   def find_team(team_id)
     team = Team.friendly.find(params[:team_id])
   end
+
+  def set_team
+    @team = Team.find(params[:team_id])
+  end
+
 end
